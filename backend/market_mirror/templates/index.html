@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Mirror AI | Enterprise Pricing Intelligence</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #0a0f1e;
+            --bg-card: rgba(15, 22, 40, 0.85);
+            --accent: #00e5ff;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-primary: #f0f4ff;
+            --text-muted: #7a8ab0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: 'IBM Plex Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Dot Grid Background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(rgba(0, 229, 255, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+            animation: backgroundMove 60s linear infinite;
+        }
+
+        @keyframes backgroundMove {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 1000px 1000px;
+            }
+        }
+
+        .syne {
+            font-family: 'Syne', sans-serif;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: #000;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Skeleton Shimmer */
+        .skeleton {
+            background: linear-gradient(90deg,
+                    rgba(255, 255, 255, 0.03) 25%,
+                    rgba(255, 255, 255, 0.08) 50%,
+                    rgba(255, 255, 255, 0.03) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Toast slide-in */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            animation: slideInRight 0.3s ease-out;
+            z-index: 100;
+        }
+
+        /* Glow card pulse */
+        .glow-card {
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.15);
+            animation: pulseGlow 4s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+            }
+
+            100% {
+                box-shadow: 0 0 40px rgba(0, 229, 255, 0.3);
+            }
+        }
+
+        /* Typing Dots */
+        .typing-dots span {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            margin: 0 1px;
+            animation: type 1.4s infinite alternate;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes type {
+            from {
+                opacity: 0.3;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(-4px);
+            }
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        input,
+        select {
+            background: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--accent) !important;
+            outline: none;
+            background: rgba(255, 255, 255, 0.05) !important;
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.15);
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .glass-form {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- VIEW 1: INPUT FORM -->
+    <div id="view-input" class="min-h-screen flex flex-col items-center justify-center p-6">
+        <div class="text-center mb-10 w-full max-w-2xl">
+            <h1 class="syne text-5xl md:text-6xl mb-4 gradient-text font-extrabold tracking-tight">
+                ⬡ Market Mirror AI
+            </h1>
+            <p class="text-muted text-lg font-medium">
+                Smart Retail Intelligence for the Modern Seller
+            </p>
+        </div>
+
+        <div class="card glass-form w-full max-w-2xl glow-card">
+            <form id="product-form" class="space-y-6">
+                <!-- Product Name -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-muted uppercase tracking-wider">Product Name</label>
+                    <input type="text" id="product_name" name="product_name" placeholder="E.g. Sony WH-1000XM5"
+                        class="w-full px-4 py-3 rounded-lg">
+                    <span id="err-product_name" class="error-msg">Please enter a product name</span>
+                </div>
+
+                <!-- Your Platform & Price -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-muted uppercase tracking-wider">Your Selling
+                            Platform</label>
+                        <select id="your_platform" name="your_platform"
+                            class="w-full px-4 py-3 rounded-lg appearance-none">
+                            <option value="">Select Platform</option>
+                            <option value="Amazon">Amazon</option>
+                            <option value="Flipkart">Flipkart</option>
+                            <option value="Croma">Croma</option>
+                            <option value="Reliance Digital">Reliance Digital</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span id="err-your_platform" class="error-msg">Select your platform</span>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-muted uppercase tracking-wider">Your Current
+                            Price (₹)</label>
+                        <input type="number" id="your_price" name="your_price" min="1" placeholder="24999"
+                            class="w-full px-4 py-3 rounded-lg">
+                        <span id="err-your_price" class="error-msg">Enter a valid price</span>
+                    </div>
+                </div>
+
+                <!-- Min Margin -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-muted uppercase tracking-wider">Minimum Profit Margin
+                        (%)</label>
+                    <input type="number" id="min_margin" name="min_margin" min="1" max="90" placeholder="15"
+                        class="w-full px-4 py-3 rounded-lg">
+                    <span id="err-min_margin" class="error-msg">Enter margin (1-90%)</span>
+                </div>
+
+                <!-- Competitor Platforms -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-sm font-semibold text-muted uppercase tracking-wider">Competitor
+                            Platforms</label>
+                        <button type="button" id="toggle-all-platforms"
+                            class="text-xs text-accent hover:underline font-semibold uppercase tracking-tighter">
+                            Select All Platforms
+                        </button>
+                    </div>
+
+                    <div id="platforms-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" name="competitor_platforms" value="Amazon"
+                                class="w-5 h-5 rounded border-white/10 bg-white/5 checked:bg-cyan-500">
+                            <span class="text-sm group-hover:text-accent transition-colors">Amazon</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" name="competitor_platforms" value="Flipkart"
+                                class="w-5 h-5 rounded border-white/10 bg-white/5 checked:bg-cyan-500">
+                            <span class="text-sm group-hover:text-accent transition-colors">Flipkart</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" name="competitor_platforms" value="Croma"
+                                class="w-5 h-5 rounded border-white/10 bg-white/5 checked:bg-cyan-500">
+                            <span class="text-sm group-hover:text-accent transition-colors">Croma</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" name="competitor_platforms" value="Reliance Digital"
+                                class="w-5 h-5 rounded border-white/10 bg-white/5 checked:bg-cyan-500">
+                            <span class="text-sm group-hover:text-accent transition-colors">Reliance Digital</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" name="competitor_platforms" value="Snapdeal"
+                                class="w-5 h-5 rounded border-white/10 bg-white/5 checked:bg-cyan-500">
+                            <span class="text-sm group-hover:text-accent transition-colors">Snapdeal</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" name="competitor_platforms" value="Myntra"
+                                class="w-5 h-5 rounded border-white/10 bg-white/5 checked:bg-cyan-500">
+                            <span class="text-sm group-hover:text-accent transition-colors">Myntra</span>
+                        </label>
+                    </div>
+                    <span id="err-competitor_platforms" class="error-msg">Select at least one competitor</span>
+
+                    <!-- Custom Platform -->
+                    <div class="flex space-x-2 mt-4">
+                        <input type="text" id="custom-platform-input" placeholder="Custom platform..."
+                            class="flex-1 px-4 py-2 text-sm rounded-lg">
+                        <button type="button" id="add-platform-btn"
+                            class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm transition-all">
+                            + Add
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="btn-primary w-full text-lg py-4 group">
+                        Analyze Market
+                        <span class="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- VIEW 2: ANALYTICS DASHBOARD -->
+    <div id="view-dashboard" class="hidden min-h-screen p-4 md:p-8">
+        <!-- TOP HEADER BAR -->
+        <header class="flex flex-col md:flex-row items-center justify-between mb-8 gap-4">
+            <div class="flex items-center space-x-4">
+                <span class="syne text-2xl font-extrabold text-accent">⬡ Market Mirror AI</span>
+                <div class="h-8 w-px bg-white/10 hidden md:block"></div>
+                <div class="flex flex-col md:flex-row md:items-center md:space-x-4">
+                    <h2 id="header-product-name" class="text-xl font-bold"></h2>
+                    <span id="header-platform" class="badge bg-white/10 text-xs text-muted"></span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 w-full md:w-auto">
+                <button id="new-analysis-btn" class="flex-1 md:flex-none border border-white/10 hover:bg-white/5 px-4 py-2 rounded-lg text-sm transition-all">
+                    New Analysis
+                </button>
+                <button id="simulate-data-btn" class="flex-1 md:flex-none btn-primary py-2 text-sm">
+                    Simulate New Data
+                </button>
+            </div>
+        </header>
+
+        <!-- DASHBOARD GRID -->
+        <div class="grid grid-cols-12 gap-6">
+            
+            <!-- SECTION 1: PRODUCT SUMMARY -->
+            <div id="section-summary" class="col-span-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card flex flex-col justify-between">
+                    <span class="text-xs font-semibold text-muted uppercase">Product</span>
+                    <div id="sum-name" class="text-lg font-bold mt-2">--</div>
+                </div>
+                <div class="card flex flex-col justify-between">
+                    <span class="text-xs font-semibold text-muted uppercase">Platform</span>
+                    <div id="sum-platform" class="text-lg font-bold mt-2">--</div>
+                </div>
+                <div class="card flex flex-col justify-between">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-semibold text-muted uppercase">Your Price</span>
+                        <span id="market-position-badge" class="badge">--</span>
+                    </div>
+                    <div id="sum-price" class="text-2xl font-bold mt-2 text-accent">₹--</div>
+                </div>
+                <div class="card flex flex-col justify-between">
+                    <span class="text-xs font-semibold text-muted uppercase">Target Margin</span>
+                    <div id="sum-margin" class="text-2xl font-bold mt-2 text-success">--%</div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: COMPETITOR PRICE COMPARISON -->
+            <div id="section-prices" class="col-span-12 lg:col-span-8 card flex flex-col">
+                <h3 class="syne text-xl mb-6">Market Price Comparison</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+                    <div class="overflow-x-auto">
+                        <table id="price-table" class="w-full text-left text-sm">
+                            <thead class="text-muted uppercase text-xs border-b border-white/10">
+                                <tr>
+                                    <th class="pb-3">Platform</th>
+                                    <th class="pb-3 text-right">Price ₹</th>
+                                    <th class="pb-3 text-right">vs Yours</th>
+                                    <th class="pb-3 text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                <!-- JS Injected -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="h-64 md:h-full min-h-[250px]">
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 7: COMPETITION RISK (Moved up for better flow) -->
+            <div id="section-risk" class="col-span-12 lg:col-span-4 card flex flex-col h-full">
+                <h3 class="syne text-xl mb-6">Competition Risk</h3>
+                <div class="space-y-6 flex-1">
+                    <div class="flex justify-between items-center">
+                        <span class="text-muted">Active Sellers Tracked</span>
+                        <span id="risk-sellers" class="text-2xl font-bold">--</span>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-muted">Competition Level</span>
+                            <span id="risk-level" class="font-bold">--</span>
+                        </div>
+                        <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                            <div id="risk-bar" class="h-full transition-all duration-1000" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center pt-4">
+                        <span class="text-muted mb-2 text-center w-full">Price War Risk</span>
+                        <div id="risk-gauge" class="relative w-48 h-24 overflow-hidden flex items-end justify-center rounded-t-full border-t-2 border-l-2 border-r-2 border-white/10">
+                            <!-- Gauge logic via CSS conic-gradient -->
+                            <span id="risk-war" class="text-xl font-extrabold pb-2">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: PRICE TREND ANALYSIS -->
+            <div id="section-trends" class="col-span-12 card">
+                <h3 class="syne text-xl mb-6">7-Day Price Trends</h3>
+                <div class="h-80 w-full mb-8">
+                    <canvas id="trendChart"></canvas>
+                </div>
+                <div id="trend-cards" class="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
+                    <!-- JS Injected -->
+                </div>
+            </div>
+
+            <!-- SECTION 4: MARKET DEMAND -->
+            <div id="section-demand" class="col-span-12 lg:col-span-12 flex flex-col md:grid md:grid-cols-12 gap-6">
+                <div class="md:col-span-8 card">
+                    <h3 class="syne text-xl mb-6">Demand Analytics</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        <div class="text-center">
+                            <span class="text-xs text-muted uppercase font-bold">Avg Rating</span>
+                            <div id="demand-rating" class="text-2xl font-bold mt-1 text-amber-400">--</div>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-xs text-muted uppercase font-bold">Total Reviews</span>
+                            <div id="demand-reviews" class="text-2xl font-bold mt-1">--</div>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-xs text-muted uppercase font-bold">Monthly Growth</span>
+                            <div id="demand-growth" class="text-2xl font-bold mt-1 text-success">--%</div>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-xs text-muted uppercase font-bold">Demand Level</span>
+                            <div id="demand-level" class="mt-1">--</div>
+                        </div>
+                    </div>
+                    <p id="demand-summary" class="text-muted italic border-l-2 border-accent pl-4 py-2 bg-accent/5 rounded-r-lg">
+                        Gathering demand intelligence...
+                    </p>
+                </div>
+
+                <!-- SECTION 5: AI PRICING RECOMMENDATION -->
+                <div id="section-recommendation" class="md:col-span-4 card glow-card flex flex-col justify-between">
+                    <h3 class="syne text-xl mb-4 flex items-center">
+                        <span class="mr-2">✨</span> AI Prediction
+                    </h3>
+                    <div class="space-y-4 py-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-muted">Market Avg</span>
+                            <span id="rec-market-avg" class="font-bold">₹--</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-muted">Your Price</span>
+                            <span id="rec-your-price" class="font-bold">₹--</span>
+                        </div>
+                        <div class="pt-4 border-t border-white/5 text-center">
+                            <span class="text-xs text-muted uppercase font-bold block mb-1">Suggested Price</span>
+                            <span id="rec-suggested" class="text-4xl font-extrabold text-accent">₹--</span>
+                        </div>
+                    </div>
+                    <p id="rec-reason" class="text-xs text-muted text-center italic"></p>
+                </div>
+            </div>
+
+            <!-- SECTION 6: SMART PRICE ALERTS -->
+            <div id="section-alerts" class="col-span-12 lg:col-span-7 card">
+                <h3 class="syne text-xl mb-6">Critical Market Alerts</h3>
+                <div id="alerts-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- JS Injected -->
+                </div>
+            </div>
+
+            <!-- SECTION 8: MARKET INTELLIGENCE CHAT -->
+            <div id="section-query" class="col-span-12 lg:col-span-5 card flex flex-col">
+                <h3 class="syne text-xl mb-6">Market Intelligence Coach</h3>
+                <div class="flex-1 flex flex-col justify-end space-y-4 max-h-[300px] overflow-y-auto mb-4" id="chat-container">
+                    <div id="query-response" class="hidden">
+                        <div id="query-answer" class="bg-white/5 border border-white/10 p-4 rounded-xl text-sm leading-relaxed">
+                            <!-- Answer Injected -->
+                        </div>
+                    </div>
+                    <div id="typing-indicator" class="hidden">
+                        <div class="bg-white/5 w-16 p-3 rounded-full flex justify-center items-center">
+                            <div class="typing-dots"><span></span><span></span><span></span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative mt-auto">
+                    <input type="text" id="query-input" placeholder="Ask about your market..." class="w-full px-4 py-4 pr-32 rounded-xl">
+                    <button id="query-btn" class="absolute right-2 top-2 btn-primary px-4 py-2 text-sm h-[calc(100%-1rem)]">
+                        Ask AI →
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="toast-container" class="toast-container p-4 pointer-events-none"></div>
+    </div>
+
+    <script>
+        // State Management
+        let currentProductId = null;
+        let priceChart = null;
+        let trendChart = null;
+
+        // --- Core Functions ---
+
+        document.getElementById('product-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (validateForm()) {
+                const formData = new FormData(e.target);
+                const data = {
+                    product_name: formData.get('product_name'),
+                    your_platform: formData.get('your_platform'),
+                    your_price: parseFloat(formData.get('your_price')),
+                    min_margin: parseFloat(formData.get('min_margin')),
+                    competitor_platforms: Array.from(formData.getAll('competitor_platforms'))
+                };
+
+                try {
+                    const res = await fetch('/api/products/add_product', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    const product = await res.json();
+                    currentProductId = product.id;
+                    switchToDashboard(product.id);
+                } catch (err) {
+                    showToast("Error connecting to server", "error");
+                }
+            }
+        });
+
+        function validateForm() {
+            let isValid = true;
+            const fields = ['product_name', 'your_platform', 'your_price', 'min_margin'];
+            
+            fields.forEach(f => {
+                const val = document.getElementById(f).value;
+                const err = document.getElementById('err-' + f);
+                if (!val) {
+                    err.style.display = 'block';
+                    isValid = false;
+                } else {
+                    err.style.display = 'none';
+                }
+            });
+
+            const comps = document.querySelectorAll('input[name="competitor_platforms"]:checked');
+            const compErr = document.getElementById('err-competitor_platforms');
+            if (comps.length === 0) {
+                compErr.style.display = 'block';
+                isValid = false;
+            } else {
+                compErr.style.display = 'none';
+            }
+
+            return isValid;
+        }
+
+        async function switchToDashboard(productId) {
+            const inputView = document.getElementById('view-input');
+            const dashView = document.getElementById('view-dashboard');
+
+            inputView.classList.add('transition-opacity', 'duration-500', 'opacity-0');
+            setTimeout(() => {
+                inputView.style.display = 'none';
+                dashView.classList.remove('hidden');
+                dashView.classList.add('opacity-0');
+                // Force a reflow to ensure the transition from 0 to 1 works
+                dashView.offsetHeight; 
+                dashView.classList.add('transition-opacity', 'duration-700');
+                dashView.classList.remove('opacity-0');
+                dashView.classList.add('opacity-100');
+                loadDashboard(productId);
+            }, 500);
+        }
+
+        async function loadDashboard(productId) {
+            showSkeletons();
+            try {
+                const [prices, demand, trends, rec, alerts, risk] = await Promise.all([
+                    fetch(`/api/prices/get_prices/${productId}`).then(r => r.json()),
+                    fetch(`/api/demand/get_demand_metrics/${productId}`).then(r => r.json()),
+                    fetch(`/api/trends/get_trends/${productId}`).then(r => r.json()),
+                    fetch(`/api/recommendations/get_ai_recommendation/${productId}`).then(r => r.json()),
+                    fetch(`/api/alerts/get_alerts/${productId}`).then(r => r.json()),
+                    fetch(`/api/risk/get_risk/${productId}`).then(r => r.json())
+                ]);
+
+                // Basic Product Info (from rec or first call)
+                document.getElementById('header-product-name').textContent = document.getElementById('product_name').value;
+                document.getElementById('header-platform').textContent = document.getElementById('your_platform').value;
+                document.getElementById('sum-name').textContent = document.getElementById('product_name').value;
+                document.getElementById('sum-platform').textContent = document.getElementById('your_platform').value;
+                document.getElementById('sum-price').textContent = `₹${rec.your_price}`;
+                document.getElementById('sum-margin').textContent = `${document.getElementById('min_margin').value}%`;
+
+                renderPrices(prices, rec.your_price);
+                renderDemand(demand);
+                renderTrends(trends);
+                renderRecommendation(rec);
+                renderAlerts(alerts);
+                renderRisk(risk);
+                
+                hideSkeletons();
+            } catch (err) {
+                showToast("Failed to load dashboard data", "error");
+            }
+        }
+
+        function renderPrices(data, userPrice) {
+            const tbody = document.querySelector('#price-table tbody');
+            tbody.innerHTML = '';
+            
+            // Sort by price to find cheapest/highest
+            const sorted = [...data].sort((a,b) => a.price - b.price);
+            const cheapest = sorted[0].platform;
+            const highest = sorted[sorted.length - 1].platform;
+
+            data.forEach(p => {
+                const row = document.createElement('tr');
+                let borderStyle = '';
+                if (p.platform === cheapest) borderStyle = 'border-l-4 border-cyan-500 pl-2';
+                else if (p.platform === highest) borderStyle = 'border-l-4 border-amber-500 pl-2';
+
+                const statusBg = p.status === 'Cheaper' ? 'bg-red-500/20 text-red-500' : p.status === 'Higher' ? 'bg-green-500/20 text-green-500' : 'bg-white/10 text-muted';
+                
+                row.innerHTML = `
+                    <td class="py-4 font-medium ${borderStyle}">${p.platform}</td>
+                    <td class="py-4 text-right font-bold">₹${p.price.toLocaleString()}</td>
+                    <td class="py-4 text-right font-medium ${p.difference < 0 ? 'text-danger' : 'text-success'}">
+                        ${p.difference > 0 ? '+' : ''}${p.difference}
+                    </td>
+                    <td class="py-4 text-center">
+                        <span class="badge ${statusBg}">${p.status}</span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Chart
+            if (priceChart) priceChart.destroy();
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            priceChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(p => p.platform),
+                    datasets: [{
+                        label: 'Price ₹',
+                        data: data.map(p => p.price),
+                        backgroundColor: data.map(p => p.difference < 0 ? 'rgba(239, 68, 68, 0.4)' : 'rgba(0, 229, 255, 0.4)'),
+                        borderColor: data.map(p => p.difference < 0 ? '#ef4444' : '#00e5ff'),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: false, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7a8ab0' } },
+                        x: { grid: { display: false }, ticks: { color: '#7a8ab0' } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function renderTrends(data) {
+            const container = document.getElementById('trend-cards');
+            container.innerHTML = '';
+
+            const datasets = data.map((t, idx) => ({
+                label: t.platform,
+                data: t.prices,
+                borderColor: `hsl(${idx * 45}, 70%, 50%)`,
+                tension: 0.3,
+                borderWidth: 2,
+                pointRadius: 0
+            }));
+
+            if (trendChart) trendChart.destroy();
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data[0].day_labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7a8ab0' } },
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#7a8ab0' } }
+                    },
+                    plugins: { 
+                        legend: { labels: { color: '#7a8ab0' } }
+                    }
+                }
+            });
+
+            data.forEach(t => {
+                const pct = ((t.price_change / (t.prices[0])) * 100).toFixed(1);
+                const emoji = t.trend === 'Increasing' ? '📈' : t.trend === 'Decreasing' ? '📉' : '↔️';
+                const colorClass = t.trend === 'Increasing' ? 'text-success' : t.trend === 'Decreasing' ? 'text-danger' : 'text-muted';
+                
+                const card = document.createElement('div');
+                card.className = 'card min-w-[200px] flex-shrink-0 !py-3 !px-4';
+                card.innerHTML = `
+                    <div class="text-xs font-bold text-muted uppercase mb-1">${t.platform}</div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-bold">${emoji} ${t.trend}</span>
+                        <span class="text-xs ${colorClass}">${t.price_change > 0 ? '+' : ''}${pct}%</span>
+                    </div>
+                    <div class="text-[10px] text-muted leading-tight">${t.possible_reason}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderDemand(data) {
+            const ratingEl = document.getElementById('demand-rating');
+            const stars = '★'.repeat(Math.round(data.avg_rating)) + '☆'.repeat(5 - Math.round(data.avg_rating));
+            ratingEl.innerHTML = `${data.avg_rating} <span class="text-xs block font-normal opacity-50">${stars}</span>`;
+
+            animateCounter(document.getElementById('demand-reviews'), data.total_reviews);
+            document.getElementById('demand-growth').textContent = `${data.monthly_growth}%`;
+            
+            const levelEl = document.getElementById('demand-level');
+            const levelColor = data.demand_level === 'High' ? 'text-success' : data.demand_level === 'Medium' ? 'text-warning' : 'text-muted';
+            levelEl.innerHTML = `<span class="badge ${levelColor} bg-white/5 border border-white/5">${data.demand_level} Demand</span>`;
+            
+            document.getElementById('demand-summary').textContent = data.summary;
+        }
+
+        function renderRecommendation(data) {
+            document.getElementById('rec-market-avg').textContent = `₹${data.market_avg_price.toLocaleString()}`;
+            document.getElementById('rec-your-price').textContent = `₹${data.your_price.toLocaleString()}`;
+            animateCounter(document.getElementById('rec-suggested'), data.suggested_price, 2000, true);
+            document.getElementById('rec-reason').textContent = data.reason;
+
+            const badge = document.getElementById('market-position-badge');
+            if (data.your_price > data.market_avg_price) {
+                badge.textContent = 'Above Market';
+                badge.className = 'badge bg-danger/20 text-danger';
+            } else {
+                badge.textContent = 'Competitive';
+                badge.className = 'badge bg-success/20 text-success';
+            }
+        }
+
+        function renderAlerts(data) {
+            const container = document.getElementById('alerts-grid');
+            container.innerHTML = '';
+            
+            data.forEach(a => {
+                const border = a.risk_level === 'High' ? 'border-l-4 border-danger' : a.risk_level === 'Medium' ? 'border-l-4 border-warning' : 'border-l-4 border-success';
+                const card = document.createElement('div');
+                card.className = `bg-white/5 p-4 rounded-lg flex flex-col justify-between ${border}`;
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-bold uppercase tracking-widest text-muted">${a.platform}</span>
+                        <span class="text-[10px] font-bold uppercase ${a.risk_level === 'High' ? 'text-danger' : 'text-muted'}">${a.risk_level} Priority</span>
+                    </div>
+                    <div class="text-sm font-bold mb-1">Difference: ₹${a.price_difference} (${a.price_difference_pct}%)</div>
+                    <div class="text-[11px] text-muted mb-3">${a.customer_shift_risk}</div>
+                    <div class="text-[11px] font-medium text-accent">AI Action: ${a.recommended_action}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderRisk(data) {
+            document.getElementById('risk-sellers').textContent = data.active_sellers;
+            document.getElementById('risk-level').textContent = data.competition_level;
+            
+            const bar = document.getElementById('risk-bar');
+            bar.style.width = `${data.competition_score}%`;
+            bar.className = `h-full transition-all duration-1000 ${data.competition_score > 65 ? 'bg-danger' : data.competition_score > 35 ? 'bg-warning' : 'bg-success'}`;
+            
+            document.getElementById('risk-war').textContent = data.price_war_risk;
+            const scoreColor = data.competition_score > 65 ? '#ef4444' : data.competition_score > 35 ? '#f59e0b' : '#10b981';
+            document.getElementById('risk-gauge').style.background = `conic-gradient(from 180deg at 50% 100%, ${scoreColor} 0deg, ${scoreColor} ${data.competition_score * 1.8}deg, rgba(255,255,255,0.05) 0deg)`;
+        }
+
+        // --- Helper Functions ---
+
+        function showSkeletons() {
+            document.querySelectorAll('[id^="section-"] .card, [id^="section-"] canvas').forEach(el => {
+                el.classList.add('opacity-40');
+            });
+        }
+
+        function hideSkeletons() {
+            document.querySelectorAll('[id^="section-"] .card, [id^="section-"] canvas').forEach(el => {
+                el.classList.remove('opacity-40');
+            });
+        }
+
+        function animateCounter(element, targetValue, duration = 1500, isPrice = false) {
+            let startValue = 0;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const current = Math.floor(progress * targetValue);
+                element.textContent = isPrice ? `₹${current.toLocaleString()}` : current.toLocaleString();
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function showToast(message, type = "success") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const color = type === 'error' ? 'border-danger' : type === 'warning' ? 'border-warning' : 'border-success';
+            toast.className = `card toast !py-3 !px-6 border-l-4 ${color} !backdrop-blur-xl pointer-events-auto`;
+            toast.innerHTML = `<span class="text-sm font-bold">${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- Event Handlers ---
+
+        document.getElementById('query-btn').addEventListener('click', async () => {
+            const input = document.getElementById('query-input').value;
+            if (!input) return;
+
+            document.getElementById('typing-indicator').classList.remove('hidden');
+            document.getElementById('query-response').classList.add('hidden');
+
+            try {
+                const res = await fetch('/api/query/query_market', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_id: currentProductId, question: input })
+                });
+                const data = await res.json();
+                
+                setTimeout(() => {
+                    document.getElementById('typing-indicator').classList.add('hidden');
+                    document.getElementById('query-answer').textContent = data.answer;
+                    document.getElementById('query-response').classList.remove('hidden');
+                }, 1000);
+            } catch (err) {
+                document.getElementById('typing-indicator').classList.add('hidden');
+                showToast("Chat failed", "error");
+            }
+        });
+
+        document.getElementById('simulate-data-btn').addEventListener('click', async () => {
+            try {
+                const res = await fetch(`/api/prices/refresh_prices/${currentProductId}`, { method: 'POST' });
+                if (res.ok) {
+                    loadDashboard(currentProductId);
+                    showToast("✅ Market data refreshed and re-analyzed");
+                }
+            } catch (err) {
+                showToast("Refresh failed", "error");
+            }
+        });
+
+        document.getElementById('new-analysis-btn').addEventListener('click', () => location.reload());
+
+        document.getElementById('toggle-all-platforms').addEventListener('click', () => {
+            const checks = document.querySelectorAll('input[name="competitor_platforms"]');
+            const allChecked = Array.from(checks).every(c => c.checked);
+            checks.forEach(c => c.checked = !allChecked);
+        });
+
+        document.getElementById('add-platform-btn').addEventListener('click', () => {
+            const input = document.getElementById('custom-platform-input');
+            if (input.value.trim()) {
+                const grid = document.getElementById('platforms-grid');
+                const label = document.createElement('label');
+                label.className = 'flex items-center space-x-3 cursor-pointer group';
+                label.innerHTML = `
+                    <input type="checkbox" name="competitor_platforms" value="${input.value}" checked class="w-5 h-5 rounded border-white/10 bg-white/5 checked:bg-cyan-500">
+                    <span class="text-sm group-hover:text-accent transition-colors">${input.value}</span>
+                `;
+                grid.appendChild(label);
+                input.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
