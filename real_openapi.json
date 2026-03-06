@@ -1,0 +1,831 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Market Mirror AI",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/add_product": {
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Add Product",
+        "operationId": "add_product_api_add_product_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/get_product/{product_id}": {
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Get Product Endpoint",
+        "operationId": "get_product_endpoint_api_get_product__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/get_prices/{product_id}": {
+      "get": {
+        "tags": [
+          "prices"
+        ],
+        "summary": "Get Prices",
+        "operationId": "get_prices_api_get_prices__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompetitorPriceResponse"
+                  },
+                  "title": "Response Get Prices Api Get Prices  Product Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/refresh_prices/{product_id}": {
+      "post": {
+        "tags": [
+          "prices"
+        ],
+        "summary": "Refresh Prices",
+        "operationId": "refresh_prices_api_refresh_prices__product_id__post",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CompetitorPriceResponse"
+                  },
+                  "title": "Response Refresh Prices Api Refresh Prices  Product Id  Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/get_demand_metrics/{product_id}": {
+      "get": {
+        "tags": [
+          "demand"
+        ],
+        "summary": "Get Demand Metrics Endpoint",
+        "operationId": "get_demand_metrics_endpoint_api_get_demand_metrics__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemandMetricsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/get_trends/{product_id}": {
+      "get": {
+        "tags": [
+          "trends"
+        ],
+        "summary": "Get Trends",
+        "operationId": "get_trends_api_get_trends__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrendResponse"
+                  },
+                  "title": "Response Get Trends Api Get Trends  Product Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/get_ai_recommendation/{product_id}": {
+      "get": {
+        "tags": [
+          "recommendations"
+        ],
+        "summary": "Get Ai Recommendation",
+        "operationId": "get_ai_recommendation_api_get_ai_recommendation__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIRecommendationResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/get_alerts/{product_id}": {
+      "get": {
+        "tags": [
+          "alerts"
+        ],
+        "summary": "Get Alerts",
+        "operationId": "get_alerts_api_get_alerts__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AlertResponse"
+                  },
+                  "title": "Response Get Alerts Api Get Alerts  Product Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/get_risk/{product_id}": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "summary": "Get Risk",
+        "operationId": "get_risk_api_get_risk__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Product Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/query_market": {
+      "post": {
+        "tags": [
+          "query"
+        ],
+        "summary": "Query Market",
+        "operationId": "query_market_api_query_market_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Read Root",
+        "operationId": "read_root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AIRecommendationResponse": {
+        "properties": {
+          "market_avg_price": {
+            "type": "number",
+            "title": "Market Avg Price"
+          },
+          "your_price": {
+            "type": "number",
+            "title": "Your Price"
+          },
+          "suggested_price": {
+            "type": "number",
+            "title": "Suggested Price"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "market_avg_price",
+          "your_price",
+          "suggested_price",
+          "reason"
+        ],
+        "title": "AIRecommendationResponse"
+      },
+      "AlertResponse": {
+        "properties": {
+          "platform": {
+            "type": "string",
+            "title": "Platform"
+          },
+          "price_difference": {
+            "type": "number",
+            "title": "Price Difference"
+          },
+          "price_difference_pct": {
+            "type": "number",
+            "title": "Price Difference Pct"
+          },
+          "competitiveness_impact": {
+            "type": "string",
+            "title": "Competitiveness Impact"
+          },
+          "customer_shift_risk": {
+            "type": "string",
+            "title": "Customer Shift Risk"
+          },
+          "recommended_action": {
+            "type": "string",
+            "title": "Recommended Action"
+          },
+          "risk_level": {
+            "type": "string",
+            "title": "Risk Level"
+          }
+        },
+        "type": "object",
+        "required": [
+          "platform",
+          "price_difference",
+          "price_difference_pct",
+          "competitiveness_impact",
+          "customer_shift_risk",
+          "recommended_action",
+          "risk_level"
+        ],
+        "title": "AlertResponse"
+      },
+      "CompetitorPriceResponse": {
+        "properties": {
+          "platform": {
+            "type": "string",
+            "title": "Platform"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "difference": {
+            "type": "number",
+            "title": "Difference"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "platform",
+          "price",
+          "difference",
+          "status"
+        ],
+        "title": "CompetitorPriceResponse"
+      },
+      "DemandMetricsResponse": {
+        "properties": {
+          "avg_rating": {
+            "type": "number",
+            "title": "Avg Rating"
+          },
+          "total_reviews": {
+            "type": "integer",
+            "title": "Total Reviews"
+          },
+          "monthly_growth": {
+            "type": "number",
+            "title": "Monthly Growth"
+          },
+          "demand_level": {
+            "type": "string",
+            "title": "Demand Level"
+          },
+          "summary": {
+            "type": "string",
+            "title": "Summary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "avg_rating",
+          "total_reviews",
+          "monthly_growth",
+          "demand_level",
+          "summary"
+        ],
+        "title": "DemandMetricsResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ProductCreate": {
+        "properties": {
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "your_platform": {
+            "type": "string",
+            "title": "Your Platform"
+          },
+          "your_price": {
+            "type": "number",
+            "title": "Your Price"
+          },
+          "min_margin": {
+            "type": "number",
+            "title": "Min Margin"
+          },
+          "competitor_platforms": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Competitor Platforms"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_name",
+          "your_platform",
+          "your_price",
+          "min_margin",
+          "competitor_platforms"
+        ],
+        "title": "ProductCreate"
+      },
+      "ProductResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "product_name": {
+            "type": "string",
+            "title": "Product Name"
+          },
+          "your_platform": {
+            "type": "string",
+            "title": "Your Platform"
+          },
+          "your_price": {
+            "type": "number",
+            "title": "Your Price"
+          },
+          "min_margin": {
+            "type": "number",
+            "title": "Min Margin"
+          },
+          "competitor_platforms": {
+            "type": "string",
+            "title": "Competitor Platforms"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "product_name",
+          "your_platform",
+          "your_price",
+          "min_margin",
+          "competitor_platforms",
+          "created_at"
+        ],
+        "title": "ProductResponse"
+      },
+      "QueryRequest": {
+        "properties": {
+          "product_id": {
+            "type": "integer",
+            "title": "Product Id"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_id",
+          "question"
+        ],
+        "title": "QueryRequest"
+      },
+      "QueryResponse": {
+        "properties": {
+          "answer": {
+            "type": "string",
+            "title": "Answer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "title": "QueryResponse"
+      },
+      "RiskResponse": {
+        "properties": {
+          "active_sellers": {
+            "type": "integer",
+            "title": "Active Sellers"
+          },
+          "competition_level": {
+            "type": "string",
+            "title": "Competition Level"
+          },
+          "price_war_risk": {
+            "type": "string",
+            "title": "Price War Risk"
+          },
+          "competition_score": {
+            "type": "number",
+            "title": "Competition Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "active_sellers",
+          "competition_level",
+          "price_war_risk",
+          "competition_score"
+        ],
+        "title": "RiskResponse"
+      },
+      "TrendResponse": {
+        "properties": {
+          "platform": {
+            "type": "string",
+            "title": "Platform"
+          },
+          "prices": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Prices"
+          },
+          "day_labels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Day Labels"
+          },
+          "price_change": {
+            "type": "number",
+            "title": "Price Change"
+          },
+          "trend": {
+            "type": "string",
+            "title": "Trend"
+          },
+          "possible_reason": {
+            "type": "string",
+            "title": "Possible Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "platform",
+          "prices",
+          "day_labels",
+          "price_change",
+          "trend",
+          "possible_reason"
+        ],
+        "title": "TrendResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
