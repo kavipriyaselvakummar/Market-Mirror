@@ -1,0 +1,24 @@
+# Virtual environments
+venv/
+market_mirror/venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyc
+
+# SQLite database (runtime data, not source code)
+*.db
+*.sqlite3
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
